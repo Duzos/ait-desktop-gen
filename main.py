@@ -60,25 +60,26 @@ def CreateRequiredPaths(output_path : str, namespace : str, desktop_id : str):
     CreateFolder(output_path + "datapack/data/" + namespace + "/desktop")
     CreateFolder(output_path + "datapack/data/" + namespace + "/structures/interiors")
     
+def CreatePack(namespace : str, id : str, preview_path : str, nbt_path : str, output_path : str = OUTPUT_DIR):
+    CreateRequiredPaths(output_path, namespace, id)
+
+    CreateMcMeta(output_path + "resourcepack/")
+    CreateMcMeta(output_path + "datapack/")
+    CreateDesktopJson(namespace, id)
+
+    CopyPreview(preview_path, namespace, id)
+    CopyStructure(nbt_path, namespace, id)
+
 def main():
     root = tk.Tk()
     root.withdraw()
 
     namespace = simpledialog.askstring(WINDOW_TITLE, "Namespace")
     id = simpledialog.askstring(WINDOW_TITLE, "Desktop id")
-
-    CreateRequiredPaths(OUTPUT_DIR, namespace, id)
-
-    CreateMcMeta(ASSETS_DIR)
-    CreateMcMeta(DATA_DIR)
-
-    CreateDesktopJson(namespace, id)
-
     preview_path = filedialog.askopenfilename(filetypes=[("PNG files", "*.png")], title="Select desktop preview")
-    CopyPreview(preview_path, namespace, id)
-
     nbt_path = filedialog.askopenfilename(filetypes=[("NBT files", "*.nbt")], title="Select structure file")
-    CopyStructure(nbt_path, namespace, id)
+
+    CreatePack(namespace, id, preview_path, nbt_path)
 
     # open file explorer at output
     os.startfile(os.getcwd() + "/output")
