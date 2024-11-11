@@ -1,13 +1,19 @@
-import os, json, shutil
+import json
+import os
+import shutil
 import tkinter as tk
+import tkinter.messagebox
 from tkinter import filedialog
 from tkinter import simpledialog
 
-WINDOW_TITLE = "duzo desktop generator :)"
+VERSION = "1.0.0" # dont forget to increment this
+WINDOW_TITLE = "duzo desktop generator :)" + " v" + VERSION
 
 OUTPUT_DIR = "./output/"
 ASSETS_DIR = OUTPUT_DIR + "resourcepack/"
 DATA_DIR = OUTPUT_DIR + "datapack/"
+
+DEFAULT_ICON = "./assets/icon.png"
 
 def CopyFile(source_path : str, target_path : str):
     try:
@@ -38,6 +44,7 @@ def CreateMcMeta(path : str, description: str = "Made with Duzos\'s generator"):
 
 def CreateDesktopJson(namespace : str, id : str, data_path : str = DATA_DIR):
     data = {
+        "watermark": WINDOW_TITLE,
         "id": namespace + ":" + id
     }
 
@@ -52,16 +59,16 @@ def CopyPreview(source_path : str, namespace : str, id : str, output_path : str 
 def CopyStructure(source_path : str, namespace : str, id : str, output_path : str = OUTPUT_DIR):
     CopyFile(source_path, output_path + "datapack/data/" + namespace + "/structures/interiors/" + id + ".nbt")
 
-def CreateRequiredPaths(output_path : str, namespace : str, desktop_id : str):
+def CreateRequiredPaths(output_path : str, namespace : str):
     # Resource pack folders
     CreateFolder(output_path + "resourcepack/assets/" + namespace + "/textures/desktop")
 
     # Generating datapack folders
     CreateFolder(output_path + "datapack/data/" + namespace + "/desktop")
     CreateFolder(output_path + "datapack/data/" + namespace + "/structures/interiors")
-    
+
 def CreatePack(namespace : str, id : str, preview_path : str, nbt_path : str, output_path : str = OUTPUT_DIR):
-    CreateRequiredPaths(output_path, namespace, id)
+    CreateRequiredPaths(output_path, namespace)
 
     CreateMcMeta(output_path + "resourcepack/")
     CreateMcMeta(output_path + "datapack/")
@@ -74,15 +81,27 @@ def main():
     root = tk.Tk()
     root.withdraw()
 
-    namespace = simpledialog.askstring(WINDOW_TITLE, "Namespace")
-    id = simpledialog.askstring(WINDOW_TITLE, "Desktop id")
-    preview_path = filedialog.askopenfilename(filetypes=[("PNG files", "*.png")], title="Select desktop preview")
+    namespace = simpledialog.askstring(WINDOW_TITLE, "namespace")
+    id = simpledialog.askstring(WINDOW_TITLE, "desktop id")
     nbt_path = filedialog.askopenfilename(filetypes=[("NBT files", "*.nbt")], title="Select structure file")
+    preview_path = filedialog.askopenfilename(filetypes=[("PNG files", "*.png")], title="Select desktop preview")
+
+    if preview_path == "":
+        tkinter.messagebox.showinfo(WINDOW_TITLE, "No preview selected, using default icon")
+        preview_path = DEFAULT_ICON
+
+        if not os.path.exists(preview_path):
+            tkinter.messagebox.showerror(WINDOW_TITLE, "Default icon not found, does resources folder exist? (./assets/icon.png)")
+            return
+
+    if nbt_path == "":
+        tkinter.messagebox.showerror(WINDOW_TITLE, "No structure file selected")
+        return
 
     CreatePack(namespace, id, preview_path, nbt_path)
 
     # open file explorer at output
     os.startfile(os.getcwd() + "/output")
 
-if (__name__ == '__main__'):
+if __name__ == '__main__':
     main()

@@ -12,8 +12,4 @@ aka open command prompt where you saved the file and type this
 
 `python main.py`
 
-Select all the things required in the popups
-
-
-
-Only the `main.py` is needed for this script to run, so just download that file
+Select all the things required in the popups and you are good to go.
