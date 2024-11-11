@@ -2,6 +2,7 @@
 
 ### *by duzo*
 
+## [Website Version](https://duzo.is-a.dev/desktop-online/)
 
 ## Usage
 This script automatically generates all the files and structures necessary for a custom desktop in [AIT](https://github.com/loqor/ait)
